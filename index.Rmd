@@ -28,7 +28,7 @@ htmltools::tagList(
 
 # Introdução
 
-Após 16 dias de competição, os Jogos Olímpicos de Inverno, Pequim 2022, estão chegando ao fim.  
+
 
 # Importação dos dados
 
@@ -59,7 +59,7 @@ olimpiadas <-
 
 ## Número de atletas
 
-```{r numero-atletas, results = "hide"}
+```{r numero-atletas}
 
 olimpiadas |>
   dplyr::filter(esporte != "Art Competitions") |>
