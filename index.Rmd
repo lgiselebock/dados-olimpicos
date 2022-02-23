@@ -1,7 +1,7 @@
 ---
 title: "A história das Olimpíadas através dos dados"
 author: "Luísa Gisele Böck"
-date: "20/02/2022"
+date: "23 de fevereiro de 2022"
 output:
   rmdformats::downcute:
     self_contained: true
@@ -26,9 +26,20 @@ htmltools::tagList(
 # xaringanExtra::use_panelset()
 ```
 
+```{r imagem, fig.align = "center", fig.alt = "Fotografia dos aros olímpicos, de fogos de artifício e do Estádio Nacional do Japão durante a noite"}
+
+knitr::include_graphics("img/2020-tokyo-aros-olimpicos-fogos-de-artificio.webp")
+
+```
+
+<div style="text-align: right">
+<small>Fonte: <a href="https://olympics.com/ioc/tokyo-2020">International Olympic Committee (IOC)</a></small></div>
+
 # Introdução
 
+Após 16 dias de competição, Pequim 2022 oficialmente chegou ao fim. As **"Olimpíadas Modernas"** abrangem os Jogos Olímpicos de Atenas, em 1896, à Pequim, em 2022. Mais do que apenas um campeonato mundial multiesportivo quadrienal, as Olimpíadas são uma lente da qual é possível compreender a história do mundo, como as mudanças na dinâmica do poder geopolítico, o empoderamento das mulheres, a evolução dos valores sociais, entre outros. <!-- (LGBT?) -->
 
+<!-- FALAR SOBRE O OBJETIVO DA PESQUISA, ASPECTOS PARTICULARES (CURIOSIDADES ENCONTRADAS) -->
 
 # Importação dos dados
 
