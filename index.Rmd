@@ -1,7 +1,7 @@
 ---
 title: "A história das Olimpíadas através dos dados"
 author: "Luísa Gisele Böck"
-date: "23 de fevereiro de 2022"
+date: "Fevereiro de 2022"
 output:
   rmdformats::downcute:
     self_contained: true
@@ -37,7 +37,6 @@ knitr::include_graphics("img/2020-tokyo-aros-olimpicos-fogos-de-artificio.webp")
 
 <div style="text-align: justify">
 
-
 # Introdução
 
 Após 16 dias de competição, no dia 20 de fevereiro de 2022, Pequim 2022 oficialmente chegou ao fim. As **"Olimpíadas Modernas"** abrangem os Jogos Olímpicos de Atenas, em 1896, à Pequim, em 2022. Mais do que apenas um campeonato mundial multiesportivo quadrienal, as Olimpíadas são uma lente da qual é possível compreender a história do mundo, como as mudanças na dinâmica do poder geopolítico, o empoderamento das mulheres, a evolução dos valores sociais, entre outros. <!-- (LGBT?) -->
@@ -70,7 +69,6 @@ olimpiadas <-
 Os dados utilizados neste trabalho foram retirados do site [Kaggle](https://www.kaggle.com/heesoo37/olympic-history-data-a-thorough-analysis/data), e contemplam as Olímpiadas de Inverno e Verão, da Era Moderna, entre os anos de 1896 e 2016. Dessa forma, excetuam-se os três últimos eventos: as Olímpiadas de Inverno [PyeongChang 2018](https://olympics.com/pt/olympic-games/pyeongchang-2018) e [Pequim 2022](https://olympics.com/pt/beijing-2022/), e a Olímpiada de Verão [Tóquio 2020](https://olympics.com/pt/olympic-games/tokyo-2020) que ocorreu no ano de 2021, em razão da Pandemia de Coronavírus.
 
 A base de dados está dividida em `r ncol(olimpiadas)` colunas -- que representam o *`r knitr::combine_words(names(olimpiadas), and = " e ")`* -- e `r nrow(olimpiadas)` linhas que apresentam *todos os atletas que participaram de cada um das edições entre os anos de `r min(olimpiadas$ano)` e `r max(olimpiadas$ano)`*.
-
 
 # Número de atletas, países e modalidades ao longo dos anos
 
@@ -107,7 +105,7 @@ Há dois longos períodos sem jogos, entre 1912-1920 e 1936-1948, correspondente
 
 - **L.A., 1984:** Assim como o evento anterior, esta edição também sofreu com boicotes. Desta vez, foram os países do antigo bloco soviético que retaliaram o boicote liderado pelos norte-americanos aos Jogos de Moscou 1980. Dos países relacionados ao antigo bloco soviético, apenas Romênia, Benim, República Popular do Congo, República Popular da China e a Iugoslávia participaram dos Jogos. 
 
-A partir dos anos 1990 o crescimento do evento se estabiliza, atingindo `r atletas_equipes_modalidades$atletas[50]` atletas, de `r atletas_equipes_modalidades$equipes[50]` países, distribuídos em `r atletas_equipes_modalidades$modalidades[50]` modalidades na edição de Inverno [Sochi 2014](https://olympics.com/pt/olympic-games/sochi-2014), e `r atletas_equipes_modalidades$atletas[51]` atletas de `r atletas_equipes_modalidades$equipes[51]` países em `r atletas_equipes_modalidades$modalidades[51]` modalidades na edição de Verão [Rio 2016](https://olympics.com/pt/olympic-games/rio-2016). A expectativa é de que esse números aumentem na medida em que mais modalidades foram incorporadas nas edições seguintes
+A partir dos anos 1990 o crescimento do evento se estabiliza, atingindo `r atletas_equipes_modalidades$atletas[50]` atletas, de `r atletas_equipes_modalidades$equipes[50]` países, distribuídos em `r atletas_equipes_modalidades$modalidades[50]` modalidades na edição de Inverno [Sochi 2014](https://olympics.com/pt/olympic-games/sochi-2014), e `r atletas_equipes_modalidades$atletas[51]` atletas de `r atletas_equipes_modalidades$equipes[51]` países em `r atletas_equipes_modalidades$modalidades[51]` modalidades na edição de Verão [Rio 2016](https://olympics.com/pt/olympic-games/rio-2016). A expectativa é de que esse números aumentem na medida em que mais modalidades foram incorporadas nas edições seguintes.
 
 ## Países
 
@@ -305,7 +303,6 @@ atletas_equipes_modalidades |>
 
 ```
 
-
 # As mulheres nas Olimpíadas
 
 ## Homens x Mulheres 
@@ -446,7 +443,6 @@ contagem_NOC |>
 
 O gráfico mostra que, embora tenha existido muitas mudanças entre `r min(jogos_olimpicos)` e `r jogos_olimpicos[2]`, houve uma melhora considerável na participação feminina de `r jogos_olimpicos[2]` a `r max(jogos_olimpicos)`. Em `r jogos_olimpicos[4]` e `r max(jogos_olimpicos)`, algumas delegações enviaram mais atletas do sexo feminino do que masculinos para o Jogos -- estes estão representados pelos pontos situados acima da linha tracejada.  
 
-
 # Distribuição espacial das delegações
 
 ```{r dados-mapa-mundi}
@@ -585,8 +581,6 @@ mundo |>
 
 A partir dos mapas acima, fica claro que a representação geográfica, nas Olimpíada, se expandiu ao longo do tempo, embora diversas regiões do mundo ainda estejam demasiadamente sub-representadas. Entre estas regiões estão a maior parte da África, Sudeste Asiático, Oriente Médio e grande parte da América do Sul -- o Brasil, em 2016, por ser país-sede, esteve representado em todas as `r atletas_equipes_modalidades$modalidades[51]` modalidades.
 
-
-
 <!-- # MEDALHAS (DESENVOLVER MELHOR A IDEIA) -->
 
 <!-- # ALTURA E PESO DOS ATLETAS (DESENVOLVER MELHOR A IDEIA) -->
@@ -594,5 +588,3 @@ A partir dos mapas acima, fica claro que a representação geográfica, nas Olim
 <!-- # Conclusão -->
 
 <!-- # Referências -->
-
-</div>
