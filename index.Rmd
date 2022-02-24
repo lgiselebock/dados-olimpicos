@@ -35,6 +35,8 @@ knitr::include_graphics("img/2020-tokyo-aros-olimpicos-fogos-de-artificio.webp")
 <div style="text-align: right">
 <small>Fonte: <a href="https://olympics.com/ioc/tokyo-2020">International Olympic Committee (IOC)</a></small></div>
 
+<div style="text-align: justify">
+
 # Introdução
 
 Após 16 dias de competição, Pequim 2022 oficialmente chegou ao fim. As **"Olimpíadas Modernas"** abrangem os Jogos Olímpicos de Atenas, em 1896, à Pequim, em 2022. Mais do que apenas um campeonato mundial multiesportivo quadrienal, as Olimpíadas são uma lente da qual é possível compreender a história do mundo, como as mudanças na dinâmica do poder geopolítico, o empoderamento das mulheres, a evolução dos valores sociais, entre outros. <!-- (LGBT?) -->
@@ -42,8 +44,6 @@ Após 16 dias de competição, Pequim 2022 oficialmente chegou ao fim. As **"Oli
 <!-- FALAR SOBRE O OBJETIVO DA PESQUISA, ASPECTOS PARTICULARES (CURIOSIDADES ENCONTRADAS) -->
 
 # Importação dos dados
-
-Os dados que serão utilizados neste trabalho foram retirados do site [Kaggle](https://www.kaggle.com/heesoo37/olympic-history-data-a-thorough-analysis/data), e contemplam as Olímpiadas de Inverno e Verão, da Era Moderna, entre os anos de 1896 e 2016. 
 
 ```{r dados}
 
@@ -65,18 +65,133 @@ olimpiadas <-
 
 ```
 
+Os dados utilizados neste trabalho foram retirados do site [Kaggle](https://www.kaggle.com/heesoo37/olympic-history-data-a-thorough-analysis/data), e contemplam as Olímpiadas de Inverno e Verão, da Era Moderna, entre os anos de 1896 e 2016. Dessa forma, excetuam-se os três últimos eventos: as Olímpiadas de Inverno [PyeongChang 2018](https://olympics.com/pt/olympic-games/pyeongchang-2018) e [Pequim 2022](https://olympics.com/pt/beijing-2022/), e a Olímpiada de Verão [Tóquio 2020](https://olympics.com/pt/olympic-games/tokyo-2020) que ocorreu no ano de 2021, em razão da Pandemia de Coronavírus.
 
-# NÚMERO DE ATLETAS, NAÇÕES E MODALIDADES AO LONGO DOS ANOS
+A base de dados está dividida em `r ncol(olimpiadas)` colunas -- que representam o *`r knitr::combine_words(names(olimpiadas), and = " e ")`* -- e `r nrow(olimpiadas)` linhas que apresentam *todos os atletas que participaram de cada um das edições entre os anos de `r min(olimpiadas$ano)` e `r max(olimpiadas$ano)`*.
 
-## Número de atletas
+# Número de atletas, países e modalidades ao longo dos anos
+
+```{r atletas_equipes_modalidades}
+
+# conta o número de atletas, equipes (países) e modalidades participantes das Olímpidas.
+# excluíndo as competições de arte (Art Competitions).
+
+atletas_equipes_modalidades <- olimpiadas |>
+  dplyr::filter(esporte != "Art Competitions") |>
+  dplyr::group_by(ano, edicao) |>
+  dplyr::summarise(
+    atletas = length(unique(id_atleta)),
+    equipes = length(unique(delegacao)),
+    modalidades = length(unique(evento))
+  ) |>
+  dplyr::ungroup() 
+
+```
+
+Os primeiros Jogos Olímpicos da Era Moderna foram sediados no Estádio Panathinaiko, em Atenas, no ano de `r atletas_equipes_modalidades$ano[1]`. Nestes jogos, `r atletas_equipes_modalidades$atletas[1]` atletas de `r atletas_equipes_modalidades$equipes[1]` competiram em `r atletas_equipes_modalidades$modalidades[1]` modalidades. `r max(olimpiadas$ano) - min(olimpiadas$ano)` anos depois, nas Olimpíadas de Verão [Rio 2016](https://olympics.com/pt/olympic-games/rio-2016), `r atletas_equipes_modalidades$atletas[51]` atletas de `r atletas_equipes_modalidades$equipes[51]` diferentes nações competiram nas `r atletas_equipes_modalidades$modalidades[51]` modalidades.
+
+Há dois longos períodos sem jogos, entre 1912-1920 e 1936-1948, correspondentes, respectivamente à Primeira e à Segunda Guerra Mundial. Além disso, alguns jogos são destacados por ocorrerem quedas nos números de participantes, na maioria das vezes, em razão de boicotes e protestos. São estes:
+
+- **L.A., 1932:** Ocorrido em meio à Grande Depressão, na Califórnia -- a única região dos Estados Unidos que conseguiu sobreviver economicamente à queda da Bolsa de Valores de Nova Iorque. Em raxão da grande distância, o número de participantes foi menor que nos Jogos anteriores. Ainda assim, os `r atletas_equipes_modalidades$atletas[12]` atletas participantes apresentaram elevada qualidade técnica, com a quebra de 18 recordes mundiais. 
+ 
+- **Melbourne, 1956:** Os primeiros Jogos Olímpicos ocorridos abaixo da linha do Equador foram marcados, pela primeira vez, por questões relacionadas à política internacional. A Guerra Fria, no seu início, foi responsável pelos primeiros boicotes e desistências dos Jogos Olímpicos. A invasão da Hungria por tropas soviéticas, naquele ano, causou a desistência da Espanha, Países Baixos (Holanda), Suíça e Camboja. Os egípcios, iranianos e libaneses boicotaram o evento em razão do envolvimento da França e da Grã-Bretanha na Crise de Suez. Além disso, China não participou em protesto ao reconhecimento de Taiwan pelo COI. Apesar dos boicotes, algumas dessas nações participaram das competições equestres ocorridas em Estocolmo[^1].
+
+[^1]: Algumas modalidades esportivas dos Jogos não foram realizadas no país anfitrião. É o caso do hipismo que foi transferido para Estocolmo, na Suécia, e disputado cinco meses antes de Melbourne, graças as severas leis australianas relativas à quarentena de animais que impediam a entrada de cavalos estrangeiros no país.
+
+- **Montreal, 1976:** Os Jogos ficaram marcados por um grande boicote: lideradas pela República do Congo, 26 nações africanas, o Iraque e a Guiana se recusaram a participar em protesto pelo COI não suspender a Nova Zelândia, que havia autorizado sua seleção nacional de rugby a excursionar pela África do Sul, que se encontrava suspensa da comunidade internacional em razão da política racista do *Apartheid*. Financeiramente, os Jogos foram um fracasso, causando o maior prejuízo econômico da história do evento até Atenas 2004. No âmbito esportivo, outra decepção: pela primeira vez na história dos Jogos Olímpicos de Verão, o país anfitrião terminou a competição sem conseguir conquistar uma única medalha de ouro.
+
+- **Moscou, 1980:** A edição de Jogos Olímpicos com o menor número de participantes desde Melbourne 1956 devido ao maior boicote da história olímpica, em razão de questões políticas. Em protesto a invasão soviética no Afeganistão, os Estados Unidos e mais 69 países -- um número três vezes maior do que as nações africanas que se recusaram a participar nos Jogos anteriores -- boicotaram o evento ocorrido na União Soviética. Esse esvaziamento afetou consideravelmente o nível técnico de várias modalidades. Ainda assim, foi observado algumas marcas excepcionais, inclusive de atletas de países que apoiaram a ação norte-americana e participaram individualmente sob a bandeira olímpica.
+
+- **L.A., 1984:** Assim como o evento anterior, esta edição também sofreu com boicotes. Desta vez, foram os países do antigo bloco soviético que retaliaram o boicote liderado pelos norte-americanos aos Jogos de Moscou 1980. Dos países relacionados ao antigo bloco soviético, apenas Romênia, Benim, República Popular do Congo, República Popular da China e a Iugoslávia participaram dos Jogos. 
+
+A partir dos anos 1990 o crescimento do evento se estabiliza, atingindo `r atletas_equipes_modalidades$atletas[50]` atletas, de `r atletas_equipes_modalidades$equipes[50]` países, distribuídos em `r atletas_equipes_modalidades$modalidades[50]` modalidades na edição de Inverno [Sochi 2014](https://olympics.com/pt/olympic-games/sochi-2014), e `r atletas_equipes_modalidades$atletas[51]` atletas de `r atletas_equipes_modalidades$equipes[51]` países em `r atletas_equipes_modalidades$modalidades[51]` modalidades na edição de Verão [Rio 2016](https://olympics.com/pt/olympic-games/rio-2016). A expectativa é de que esse números aumentem na medida em que mais modalidades foram incorporadas nas edições seguintes
+
+## Países
+
+```{r numero-paises}
+
+# gráfico do número de países participantes das Olímpiadas.
+# excluíndo aqueles envolvidos nas competições de arte (Art Competitions).
+
+atletas_equipes_modalidades |>
+  ggplot2::ggplot() +
+  ggplot2::aes(
+    x = ano,
+    y = equipes,
+    group = edicao,
+    color = edicao
+  ) +
+  ggplot2::geom_line(show.legend = FALSE) +
+  ggplot2::geom_point(show.legend = FALSE) +
+  ggplot2::scale_color_manual(values = c("darkorange", "darkblue")) +
+  ggplot2::annotate(
+    "text",
+    x = c(1916, 1940),
+    y = c(70, 90),
+    label = c("1a GM", "2a GM"),
+    color = "darkred"
+  ) +
+  ggplot2::annotate(
+    "text",
+    x = c(2016, 2016),
+    y = c(190, 60),
+    label = c("Verão", "Inverno"),
+    color = c("darkorange", "darkblue")
+  ) +
+  ggplot2::annotate(
+    "text",
+    x = c(1940, 1965, 1976, 1988),
+    y = c(40, 60, 100, 75),
+    label = c("L.A. 1932", "Melbourne 1956", "Montreal 1976", "Moscou 1980"), 
+    size = 3
+  ) +
+  ggplot2::geom_curve(
+    ggplot2::aes(
+      x = 1915,
+      y = 60,
+      xend = 1915,
+      yend = 38,
+    ),
+    size = 1,
+    arrow = ggplot2::arrow(length = ggplot2::unit(0.02, "npc")),
+    color = "darkred",
+    show.legend = FALSE
+  ) +
+  ggplot2::geom_curve(
+    ggplot2::aes(
+      x = 1940,
+      y = 85,
+      xend = 1940,
+      yend = 60
+    ),
+    size = 1,
+    curvature = 0.2,
+    arrow = ggplot2::arrow(length = ggplot2::unit(0.02, "npc")),
+    color = "darkred",
+    show.legend = FALSE
+  ) +
+  ggplot2::scale_x_continuous(limits = c(1896, 2016),
+                              breaks = seq(1896, 2016, 10)) +
+  ggplot2::scale_y_continuous(limits = c(0, 225),
+                              breaks = seq(0, 225, 50)) +
+  ggplot2::labs(
+    title = "Número de países participantes",
+    caption = "Elaboração própria (2021)",
+    x = "Anos",
+    y = "Países"
+  ) +
+  ggplot2::theme_minimal() 
+
+```
+
+## Atletas
 
 ```{r numero-atletas}
 
-olimpiadas |>
-  dplyr::filter(esporte != "Art Competitions") |>
-  dplyr::group_by(ano, edicao) |>
-  dplyr::summarise(atletas = length(unique(id_atleta))) |>
-  dplyr::ungroup() |>
+# gráfico do número de atletas participantes das Olímpiadas.
+# excluíndo aqueles envolvidos nas competições de arte (Art Competitions).
+
+atletas_equipes_modalidades |> 
   ggplot2::ggplot() +
   ggplot2::aes(
     x = ano,
@@ -90,38 +205,47 @@ olimpiadas |>
   ggplot2::annotate(
     "text",
     x = c(1916, 1940),
-    y = c(4500, 7500),
-    label = c("1a GM", "2a GM")
+    y = c(4500, 6500),
+    label = c("1a GM", "2a GM"),
+    color = "darkred"
   ) +
   ggplot2::annotate(
     "text",
-    x = c(2006, 2010),
-    y = c(9000, 5000),
-    label = c("Verão", "Inverno")
+    x = c(2016, 2016),
+    y = c(9750, 1250),
+    label = c("Verão", "Inverno"),
+    color = c("darkorange", "darkblue")
+  ) +
+  ggplot2::annotate(
+    "text",
+    x = c(1940, 1956, 1976, 1988),
+    y = c(1500, 2500, 6050, 5000),
+    label = c("L.A. 1932", "Melbourne 1956", "Montreal 1976", "Moscou 1980"), 
+    size = 3
   ) +
   ggplot2::geom_curve(
     ggplot2::aes(
       x = 1913,
       y = 4000,
-      xend = 1916,
+      xend = 1915,
       yend = 3000,
     ),
     size = 1,
     arrow = ggplot2::arrow(length = ggplot2::unit(0.02, "npc")),
-    color = "black",
+    color = "darkred",
     show.legend = FALSE
   ) +
   ggplot2::geom_curve(
     ggplot2::aes(
       x = 1940,
-      y = 7200,
+      y = 6000,
       xend = 1940,
       yend = 4500
     ),
     size = 1,
     curvature = 0.2,
     arrow = ggplot2::arrow(length = ggplot2::unit(0.02, "npc")),
-    color = "black",
+    color = "darkred",
     show.legend = FALSE
   ) +
   ggplot2::scale_x_continuous(limits = c(1896, 2016),
@@ -138,54 +262,14 @@ olimpiadas |>
   
 ```
 
-## Número de países
-
-```{r numero-paises}
-
-olimpiadas |>
-  dplyr::filter(esporte != "Art Competitions") |>
-  dplyr::group_by(ano, edicao) |>
-  dplyr::summarise(equipes = length(unique(delegacao))) |>
-  dplyr::ungroup() |>
-  ggplot2::ggplot() +
-  ggplot2::aes(
-    x = ano,
-    y = equipes,
-    group = edicao,
-    color = edicao
-  ) +
-  ggplot2::geom_line(show.legend = FALSE) +
-  ggplot2::geom_point(show.legend = FALSE) +
-  ggplot2::scale_color_manual(values = c("darkorange", "darkblue")) +
-  ggplot2::annotate(
-    "text",
-    x = c(2006, 2010),
-    y = c(160, 50),
-    label = c("Verão", "Inverno")
-  ) +
-  ggplot2::scale_x_continuous(limits = c(1896, 2016),
-                              breaks = seq(1896, 2016, 10)) +
-  ggplot2::scale_y_continuous(limits = c(0, 250),
-                              breaks = seq(0, 250, 50)) +
-  ggplot2::labs(
-    title = "Número de países participantes em cada Olimpíada",
-    caption = "Elaboração própria (2021)",
-    x = "Anos",
-    y = "Países"
-  ) +
-  ggplot2::theme_minimal()
-
-```
-
-## Número de modalidades
+## Modalidades
 
 ```{r numero-modalidades}
 
-olimpiadas |>
-  dplyr::filter(esporte != "Art Competitions") |>
-  dplyr::group_by(ano, edicao) |>
-  dplyr::summarise(modalidades = length(unique(evento))) |>
-  dplyr::ungroup() |>
+# gráfico do número de modalidades participantes das Olímpiadas.
+# excluíndo as competições de arte (Art Competitions).
+
+atletas_equipes_modalidades |>
   ggplot2::ggplot() +
   ggplot2::aes(
     x = ano,
@@ -199,9 +283,10 @@ olimpiadas |>
   ggplot2::scale_color_manual(values = c("darkorange", "darkblue")) +
   ggplot2::annotate(
     "text",
-    x = c(2006, 2010),
-    y = c(300, 150),
-    label = c("Verão", "Inverno")
+    x = c(2006, 2012),
+    y = c(300, 120),
+    label = c("Verão", "Inverno"),
+    color = c("darkorange", "darkblue")
   ) +
   ggplot2::scale_x_continuous(limits = c(1896, 2016),
                               breaks = seq(1896, 2016, 10)) +
@@ -219,7 +304,9 @@ olimpiadas |>
 
 # As mulheres nas Olimpíadas
 
-## Número de homens e mulheres ao longo do tempo
+## Homens x Mulheres 
+
+O crescimento do número de atletas do sexo feminino **refletiu amplamente** o aumento do número de atletas do sexo masculino até as Olimpíadas de [Atlanta 1996](https://olympics.com/pt/olympic-games/atlanta-1996), quando o número de participantes homens se estabilizou, aproximadamente, em 8000 e o número de atletas mulheres continou a crescer nas edições seguintes. 
 
 ```{r homens-mulheres}
 
@@ -232,11 +319,26 @@ for (i in 1:length(original)) {
   data$ano <- gsub(original[i], novo[i], data$ano)
 }
 data$ano <- as.integer(data$ano)
-  
-data |>
+
+homens_mulheres <- data |>
   dplyr::group_by(ano, sexo) |>
   dplyr::summarise(atletas = length(unique(id_atleta))) |>
+  dplyr::ungroup() 
+
+tab_homens_mulheres <- data |>
+  dplyr::group_by(ano, edicao, sexo) |>
+  dplyr::summarise(atletas = length(unique(id_atleta))) |>
   dplyr::ungroup() |>
+  tidyr::pivot_wider(names_from = sexo, values_from = atletas) |>
+  dplyr::rename(homens = M,
+                mulheres = F) |> 
+  dplyr::group_by(ano, edicao) |> 
+  dplyr::mutate(
+    homens_porcentagem = round(homens*100/sum(homens, mulheres, na.rm = TRUE), 2),
+    mulheres_porcentagem = round(mulheres*100/sum(homens, mulheres, na.rm = TRUE), 2)
+  )
+  
+homens_mulheres |> 
   ggplot2::ggplot() +
   ggplot2::aes(
     x = ano,
@@ -251,7 +353,8 @@ data |>
     "text",
     x = c(2013, 2013),
     y = c(9000, 4800),
-    label = c("Homens" , "Mulheres")
+    label = c("Homens" , "Mulheres"),
+    color = c("darkblue", "red")
   ) +
   ggplot2::scale_x_continuous(limits = c(1896, 2016),
                               breaks = seq(1896, 2016, 10)) +
@@ -267,12 +370,212 @@ data |>
 
 ```
 
-# MEDALHAS (DESENVOLVER MELHOR A IDEIA)
+<br>
 
-# ALTURA E PESO DOS ATLETAS (DESENVOLVER MELHOR A IDEIA)
+Com base nesta base de dados, a participação de atletas femininas atingiu seu ponto mais alto nas Olimpíadas de Sochi 2014 e do Rio 2016 com, respectivamente, `r tab_homens_mulheres$mulheres[51]` e `r tab_homens_mulheres$mulheres[50]` mulheres, o que representa um pouco mais de 40% dentre todos os atletas olímpicos.
 
-# DISTRIBUICAO ESPACIAL DOS ATLETAS (DESENVOLVER MELHOR A IDEIA)
+## Proporção de Homens x Mulheres por delegação
 
-# Conclusão
+```{r proporcao-homens-mulheres}
 
-# Referências
+# seleciona 5 jogos olimpicos 
+
+jogos_olimpicos <- c(1936, 1956, 1976, 1996, 2016)
+
+# conta os números de homens, mulheres e total de participantes por país a cada Olimpíada
+# Mantem apenas os países-anos com, no mínimo, 30 atletas
+
+contagem_NOC <- data |> 
+  dplyr::filter(ano %in% jogos_olimpicos) |> 
+  dplyr::group_by(ano, delegacao, sexo) |> 
+  dplyr::summarise(contagem = length(unique(id_atleta))) |> 
+  tidyr::spread(sexo, contagem) |> 
+  dplyr::rename(homens = M,
+                mulheres = F) |> 
+  dplyr::mutate(total = sum(homens, mulheres, na.rm = TRUE),
+                ano = as.factor(ano)) |> 
+  dplyr::filter(total > 49)
+  
+# altera NA por 0 nas colunas homens e mulheres
+
+contagem_NOC$homens[is.na(contagem_NOC$homens)] <- 0
+contagem_NOC$mulheres[is.na(contagem_NOC$mulheres)] <- 0
+
+```
+
+
+Nem todas as nações investiram igualmente em suas atletas femininas: enquanto alguns países abraçaram a oportunidade de ganhar mais melhadas em eventos femininos; outros demoraram a incluir as mulheres em suas equipes olímpicas. 
+
+O gráfico a seguir mostra o número de atletas mulheres *versus* o número de atletas homens de 5 Jogos Olímpicos selecionados (`r knitr::combine_words(jogos_olimpicos, and = " e ")`), com cada ponto representando uma delegação (ou Comitê Olímpico Nacional) e um ajuste de regressão para cada um dos 5 Jogos Olímpicos. Apenas delegações com, pelo menos, 50 atletas estão incluídas no gráfico e no ajuste da linha de regressão. A linha tracejada representa a situação ideal, onde os Comitês enviam equipes compostas por 50% de mulheres e 50% de homens.
+
+```{r grafico-proporcao-homens-mulheres}
+
+# gráfico homens x mulheres atletas por delegacao/ano
+
+contagem_NOC |>
+  ggplot2::ggplot() +
+  ggplot2::aes(
+    x = homens,
+    y = mulheres,
+    group = ano,
+    color = ano
+  ) +
+  ggplot2::geom_point(alpha = 0.6) +
+  ggplot2::geom_abline(intercept = 0,
+                       slope = 1,
+                       linetype = "dashed") +
+  ggplot2::geom_smooth(method = "lm", se = FALSE) +
+  ggplot2::scale_x_continuous(limits = c(0, 350), breaks = seq(0, 350, 50)) +
+  ggplot2::scale_y_continuous(limits = c(0, 300), breaks = seq(0, 300, 50)) +
+  ggplot2::labs(
+    title = "Porporção de Homens x Mulheres das delegações participantes",
+    # subtitle = "das delegações participantes",
+    caption = "Elaboração própria (2021)",
+    x = "Homens",
+    y = "Mulheres"
+  ) +
+  ggplot2::guides(color = ggplot2::guide_legend(reverse = TRUE)) +
+  ggplot2::theme_minimal() +
+  ggplot2::theme(legend.position = "bottom")
+  
+```
+
+<br>
+
+O gráfico mostra que, embora tenha existido muitas mudanças entre `r min(jogos_olimpicos)` e `r jogos_olimpicos[2]`, houve uma melhora considerável na participação feminina de `r jogos_olimpicos[2]` a `r max(jogos_olimpicos)`. Em `r jogos_olimpicos[4]` e `r max(jogos_olimpicos)`, algumas delegações enviaram mais atletas do sexo feminino do que masculinos para o Jogos -- estes estão representados pelos pontos situados acima da linha tracejada.     
+
+# Distribuição espacial das delegações
+
+```{r dados-mapa-mundi}
+
+jogos_mapa <- c("Amsterdam 1928", "Munique 1972", "Rio 2016")
+
+# carrega os dados correspondentes aos Comitês Olímpicos Nacionais com as regiões (países)
+
+noc <- readr::read_csv(here::here("dados", "noc-regioes.csv"))
+
+# adiciona as regioes na base de dados e remove os pontos faltantes
+
+dados_regioes <- data |> 
+  dplyr::left_join(noc, by = c("delegacao" = "NOC")) |> 
+  dplyr::filter(!is.na(region))
+
+# filtra os jogos de amsterdam 1928 e conta o total de atletas de cada pais
+
+amsterdam_1928 <- dados_regioes |> 
+  dplyr::filter(ano == 1928) |> 
+  dplyr::group_by(region) |> 
+  dplyr::summarise(amsterdam = length(unique(id_atleta)))
+
+# filtra os jogos de munique 1972 e conta o total de atletas de cada pais
+
+munique_1972 <- dados_regioes |> 
+  dplyr::filter(ano == 1972) |> 
+  dplyr::group_by(region) |> 
+  dplyr::summarise(munique = length(unique(id_atleta)))
+
+# filtra os jogos de rio 2016 e conta o total de atletas de cada pais
+
+rio_2016 <- dados_regioes |> 
+  dplyr::filter(ano == 2016) |> 
+  dplyr::group_by(region) |> 
+  dplyr::summarise(rio = length(unique(id_atleta)))
+
+# cria os dados dos mapas
+
+mundo <- ggplot2::map_data("world")
+
+mapa_dados <- tibble::tibble(region = unique(mundo$region)) |>
+  dplyr::left_join(amsterdam_1928, by = "region") |> 
+  dplyr::left_join(munique_1972, by = "region") |> 
+  dplyr::left_join(rio_2016, by = "region")
+
+# altera NA por 0 nas colunas amsterdam, munique e rio
+
+mapa_dados$amsterdam[is.na(mapa_dados$amsterdam)] <- 0
+mapa_dados$munique[is.na(mapa_dados$munique)] <- 0
+mapa_dados$rio[is.na(mapa_dados$rio)] <- 0  
+
+
+mundo <- dplyr::left_join(mundo, mapa_dados, by = "region")
+
+```
+
+Como o número de atletas vindos de diferentes países mudou ao longo do tempo? Vamos analisar três Jogos Olímpicos de Verão, separados por 44 anos: `r knitr::combine_words(jogos_mapa, and = " e ")`.
+
+## Amsterdam, 1928
+
+```{r mapa-mundi-amsterdam}
+
+# gráfico: Amsterdam, 1928
+
+mundo |> 
+  ggplot2::ggplot() +
+  ggplot2::aes(x = long, y = lat, group = group) +
+  ggplot2::geom_polygon(ggplot2::aes(fill = amsterdam)) +
+  ggplot2::labs(title = "Amsterdam, 1928",
+                caption = "Elaboração prórpia (2021)") + 
+  ggplot2::guides(fill = ggplot2::guide_colorbar(title = "Atletas")) +
+  ggplot2::scale_fill_gradient(low = "lightblue", high = "red", na.value = "gray") +
+  ggplot2::theme_void() +
+  ggplot2::theme(legend.position = "bottom",
+                 plot.title = ggplot2::element_text(hjust = 0.05, size = 15), 
+                 plot.caption = ggplot2::element_text(hjust = 0.97, size = 10))
+
+```
+
+## Munique, 1972
+
+```{r mapa-mundi-munique}
+
+# gráfico: Munique, 1972
+
+mundo |> 
+  ggplot2::ggplot() +
+  ggplot2::aes(x = long, y = lat, group = group) +
+  ggplot2::geom_polygon(ggplot2::aes(fill = munique)) +
+  ggplot2::labs(title = "Munique, 1972",
+                caption = "Elaboração prórpia (2021)") + 
+  ggplot2::guides(fill = ggplot2::guide_colorbar(title = "Atletas")) +
+  ggplot2::scale_fill_gradient(low = "lightblue", high = "red", na.value = "gray") +
+  ggplot2::theme_void() +
+  ggplot2::theme(legend.position = "bottom",
+                 plot.title = ggplot2::element_text(hjust = 0.05, size = 15), 
+                 plot.caption = ggplot2::element_text(hjust = 0.97, size = 10))
+
+```
+
+## Rio, 2016
+
+```{r mapa-mundi-rio}
+
+# gráfico: Rio, 2016
+
+mundo |> 
+  ggplot2::ggplot() +
+  ggplot2::aes(x = long, y = lat, group = group) +
+  ggplot2::geom_polygon(ggplot2::aes(fill = rio)) +
+  ggplot2::labs(title = "Rio, 2016",
+                caption = "Elaboração prórpia (2021)") + 
+  ggplot2::guides(fill = ggplot2::guide_colorbar(title = "Atletas")) +
+  ggplot2::scale_fill_gradient(low = "lightblue", high = "red", na.value = "gray") +
+  ggplot2::theme_void() +
+  ggplot2::theme(legend.position = "bottom",
+                 plot.title = ggplot2::element_text(hjust = 0.05, size = 15), 
+                 plot.caption = ggplot2::element_text(hjust = 0.97, size = 10))
+
+```
+<br>
+
+A partir dos mapas acima, fica claro que a representação geográfica, nas Olimpíada, se expandiu ao longo do tempo, embora diversas regiões do mundo ainda estejam demasiadamente sub-representadas. Entre estas regiões estão a maior parte da África, Sudeste Asiático, Oriente Médio e grande parte da América do Sul -- o Brasil, em 2016, por ser país-sede, esteve representado em todas as `r atletas_equipes_modalidades$modalidades[51]` modalidades.
+
+
+<!-- # MEDALHAS (DESENVOLVER MELHOR A IDEIA) -->
+
+<!-- # ALTURA E PESO DOS ATLETAS (DESENVOLVER MELHOR A IDEIA) -->
+
+<!-- # Conclusão -->
+
+<!-- # Referências -->
+
+</div>
