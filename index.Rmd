@@ -9,9 +9,10 @@ output:
     downcute_theme: "default"
     use_bookdown: true
     code_folding: hide
+
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   echo = TRUE,
   message = FALSE,
